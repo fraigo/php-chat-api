@@ -8,7 +8,7 @@ function validEmail($email){
 
 function response($controller, $action, $id, $content){
     $data=file_get_contents("php://input");
-    $file="./controller/$controller.php";
+    $file="./controllers/$controller.php";
     if (file_exists($file)){
         include($file);
     }else{
@@ -20,4 +20,21 @@ function response($controller, $action, $id, $content){
 
 function responseHeader($code,$message){
     header("HTTP/1.1 $code $message");
+}
+
+
+function dirContent($dir){
+    $files=scandir($dir);
+    $ignore=[".", "..", ".gitignore",".DS_Store"];
+    $result=[];
+    foreach($files as $file){
+        if (!in_array($file,$ignore)){
+            $result[]=$file;
+        }
+    }
+    return $result;
+}
+
+function fileLines($file){
+    return explode("\n",file_get_contents($file));
 }

@@ -1,22 +1,14 @@
 <?php
 
-$files=scandir("data/chats");
-foreach($files as $file){
-    if (strpos($file,"@")>0){
-        unlink("data/chats/$file");
+$result=[];
+if (file_exists("data/$action") && is_dir("data/$action")){
+    $files=scandir("data/$action");
+    foreach($files as $file){
+        echo $file;
+        if (strpos($file,"@")>0){
+            unlink("data/$action/$file");
+            $result[] = "data/$action/$file";
+        }
     }
 }
-
-$files=scandir("data/senders");
-foreach($files as $file){
-    if (strpos($file,"@")>0){
-        unlink("data/senders/$file");
-    }
-}
-
-$files=scandir("data/users");
-foreach($files as $file){
-    if (strpos($file,"@")>0){
-        unlink("data/users/$file");
-    }
-}
+echo json_encode($result);
