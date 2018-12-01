@@ -8,9 +8,12 @@ function validEmail($email){
 
 function response($controller, $action, $id, $content){
     $data=file_get_contents("php://input");
-    $file="./$controller.php";
+    $file="./controller/$controller.php";
     if (file_exists($file)){
         include($file);
+    }else{
+        responseHeader(400,'Bad Request');
+        die();
     }
     
 }
