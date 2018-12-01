@@ -2,6 +2,10 @@
 header("Content-type: text/json");
 
 if ($action == "get"){
+    if (!validEmail($id)){
+        responseHeader(400,"Bad request");
+        die();
+    }
     $result = [];
     if (file_exists("chats/$id")){
         $messages=explode("\n",file_get_contents("chats/$id"));
@@ -14,7 +18,10 @@ if ($action == "get"){
     echo json_encode($result);
 }
 if ($action == "push"){
-    
+    if (!validEmail($id)){
+        responseHeader(400,"Bad request");
+        die();
+    }
     $timestamp=time();
     $from=$_REQUEST["from"];
     $message=$_REQUEST["message"];

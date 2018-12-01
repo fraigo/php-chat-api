@@ -2,6 +2,10 @@
 header("Content-type: text/json");
 
 if ($action=="register"){
+    if (!validEmail($id)){
+        responseHeader(400,"Bad request");
+        die();
+    }
     $user=[
         "email" => $id,
         "imageUrl" => "",
