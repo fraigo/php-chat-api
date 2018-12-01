@@ -44,8 +44,8 @@ if ($action == "push"){
 
     $f=fopen("chats/$from","a");
     $result = [];
-    $result["from"]=$id;
-    $result["to"]=$from;
+    $result["from"]=$from;
+    $result["to"]=$id;
     $result["timestamp"]=time();
     $result["visible"]=1;
     $result["message"]=$message;
