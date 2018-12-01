@@ -10,13 +10,13 @@ foreach($files as $file){
 $files=scandir("senders");
 foreach($files as $file){
     if (strpos($file,"@")>0){
-        unlink("chats/$file");
+        unlink("senders/$file");
     }
 }
 
 $files=scandir("users");
 foreach($files as $file){
     if (strpos($file,"@")>0){
-        unlink("chats/$file");
+        unlink("users/$file");
     }
 }
