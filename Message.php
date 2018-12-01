@@ -42,11 +42,13 @@ if ($action == "push"){
         $sender["email"]=$from;
         $sender["name"]=$from;
         $sender["number"]="";
+        $sender["imageUrl"]="";   
     }
     if (file_exists("users/$from")){
         $ser=(file_get_contents("users/$from"));
         $user=unserialize(base64_decode($ser));
         $sender["name"]=$user["name"];
+        $sender["imageUrl"]=$user["imageUrl"];
     }
     $senders[$from] = $sender;
     file_put_contents("senders/$id",base64_encode(serialize($senders)));    
@@ -74,11 +76,13 @@ if ($action == "push"){
         $sender["email"]=$id;
         $sender["name"]=$id;
         $sender["number"]="";
+        $sender["imageUrl"]="";
     }
     if (file_exists("users/$id")){
         $ser=(file_get_contents("users/$id"));
         $user=unserialize(base64_decode($ser));
         $sender["name"]=$user["name"];
+        $sender["imageUrl"]=$user["imageUrl"];
     }
     $senders[$id] = $sender;
     file_put_contents("senders/$from",base64_encode(serialize($senders)));    
