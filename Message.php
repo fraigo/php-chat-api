@@ -35,12 +35,21 @@ if ($action == "push"){
         $ser=(file_get_contents("senders/$id"));
         $senders=unserialize(base64_decode($ser));
     }
-    $sender["id"]=10000+count($senders);
-    $sender["email"]=$from;
-    $sender["name"]=$from;
-    $sender["number"]="";
+    $sender=@$senders[$from];
+    if (!$sender){
+        $sender=[];
+        $sender["id"]=10000+count($senders);
+        $sender["email"]=$from;
+        $sender["name"]=$from;
+        $sender["number"]="";
+    }
+    if (file_exists("users/$from")){
+        $ser=(file_get_contents("users/$from"));
+        $user=unserialize(base64_decode($ser));
+        $sender["name"]=$user["name"];
+    }
     $senders[$from] = $sender;
-    file_put_contents("senders/$id",base64_encode(serialize($senders)));
+    file_put_contents("senders/$id",base64_encode(serialize($senders)));    
 
     $f=fopen("chats/$from","a");
     $result = [];
@@ -58,12 +67,21 @@ if ($action == "push"){
         $ser=(file_get_contents("senders/$from"));
         $senders=unserialize(base64_decode($ser));
     }
-    $sender["id"]=10000+count($senders);
-    $sender["email"]=$id;
-    $sender["name"]=$id;
-    $sender["number"]="";
+    $sender=@$senders[$id];
+    if (!$sender){
+        $sender=[];
+        $sender["id"]=10000+count($senders);
+        $sender["email"]=$id;
+        $sender["name"]=$id;
+        $sender["number"]="";
+    }
+    if (file_exists("users/$id")){
+        $ser=(file_get_contents("users/$id"));
+        $user=unserialize(base64_decode($ser));
+        $sender["name"]=$user["name"];
+    }
     $senders[$id] = $sender;
-    file_put_contents("senders/$from",base64_encode(serialize($senders)));
+    file_put_contents("senders/$from",base64_encode(serialize($senders)));    
 
     $result["timestamp"]=$timestamp;
     echo json_encode($result);

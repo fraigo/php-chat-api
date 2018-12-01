@@ -6,3 +6,17 @@ foreach($files as $file){
         unlink("chats/$file");
     }
 }
+
+$files=scandir("senders");
+foreach($files as $file){
+    if (strpos($file,"@")>0){
+        unlink("chats/$file");
+    }
+}
+
+$files=scandir("users");
+foreach($files as $file){
+    if (strpos($file,"@")>0){
+        unlink("chats/$file");
+    }
+}
