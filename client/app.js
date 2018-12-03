@@ -37,7 +37,7 @@ var app = new Vue({
         viewMessages: function(email){
             var self=this
             this.hash = "#contacts"
-            apiCall("Message/get/"+email+"/",function(data){
+            apiCall("Message/get/"+this.user.email+"/"+email,function(data){
                 self.messages = data;
             })
         },
@@ -141,11 +141,11 @@ var app = new Vue({
             var self=this
             this.currentContact = item
             self.messages = []
-            this.viewMessages(this.user.email)
-            postWorker({
-                user: this.user.email,
+            this.viewMessages(item.email)
+            messageWorker({
                 endpoint: API_ENDPOINT,
-                contact : item.email
+                contact : item.email,
+                user: this.user.email
             },function(data){
                 self.messages = data
             })
@@ -164,7 +164,7 @@ var app = new Vue({
     mounted:function(){
         this.$el.style.display="";
         console.log(this.actions);
-        startWorker();
+        startWorkers();
     },
     computed:{
         isLogged:function(){
@@ -174,24 +174,30 @@ var app = new Vue({
 })
     
 function onRegisterUser(googleUser){
-var profile = googleUser.getBasicProfile();
-var email=profile.getEmail();
-var name=encodeURI(profile.getName());
-var imageLink=encodeURI(profile.getImageUrl());
-var token=encodeURI(googleUser.getAuthResponse().id_token);
+    var profile = googleUser.getBasicProfile();
+    var email=profile.getEmail();
+    var name=encodeURI(profile.getName());
+    var imageLink=encodeURI(profile.getImageUrl());
+    var token=encodeURI(googleUser.getAuthResponse().id_token);
 
-var query="User/register/{email}/?name={name}&imageUrl={imageLink}&token={token}"
-    .replace("{email}",email)
-    .replace("{name}",name)
-    .replace("{imageLink}",imageLink)
-    .replace("{token}",token)
-console.log(query);
+    var query="User/register/{email}/?name={name}&imageUrl={imageLink}&token={token}"
+        .replace("{email}",email)
+        .replace("{name}",name)
+        .replace("{imageLink}",imageLink)
+        .replace("{token}",token)
+    console.log(query);
 
-apiCall(query, function(data){
-    console.log(data)
-    app.user = data
-    app.viewContacts()
-})
+    apiCall(query, function(data){
+        console.log(data)
+        app.user = data
+        app.viewContacts()
+        contactWorker({
+            endpoint: API_ENDPOINT,
+            user : data.email
+        },function(data){
+            app.contacts = data
+        })
+    })
 
     
 }
@@ -219,26 +225,36 @@ function apiCall(query, callback){
 }
 
 
-function startWorker() {
+function startWorkers() {
     if(typeof(Worker) !== "undefined") {
-        if(typeof(w) == "undefined") {
-            w = new Worker("worker.js");
+        if(typeof(mw) == "undefined") {
+            mw = new Worker("message-worker.js");
+        }
+        if(typeof(cw) == "undefined") {
+            cw = new Worker("contact-worker.js");
         }
     } else {
-        document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Workers...";
+        alert("Sorry, your browser does not support Web Workers.");
     }
 }
 
-function postWorker(data, callback){
-    w.onmessage = function(event) {
+function messageWorker(data, callback){
+    mw.onmessage = function(event) {
         callback(event.data)
     };
-    w.postMessage(data)
+    mw.postMessage(data)
+}
+
+function contactWorker(data, callback){
+    cw.onmessage = function(event) {
+        callback(event.data)
+    };
+    cw.postMessage(data)
 }
 
 function stopWorker() { 
-    if (w){
-        w.terminate();
-        w = undefined;
+    if (mw){
+        mw.terminate();
+        mw = undefined;
     }
 }

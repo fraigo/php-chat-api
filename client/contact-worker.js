@@ -1,13 +1,12 @@
 var i=0;
-var currentContact = null
 var currentUser = null
 var API_ENDPOINT = null
 
 function timedCall() {
-    console.log("call ",i, currentContact)
+    console.log("contact-worker ",i, currentUser)
     i=i+1;
-    if (API_ENDPOINT!=null && currentContact!=null){
-        apiCall("Message/get/"+currentContact,function(data){
+    if (API_ENDPOINT!=null && currentUser!=null){
+        apiCall("Sender/get/"+currentUser,function(data){
             postMessage(data);
         })
     }
@@ -15,10 +14,8 @@ function timedCall() {
 }
 
 onmessage = function(e) {
-    console.log("message",e.data)
     API_ENDPOINT=e.data.endpoint
     currentUser=e.data.user
-    currentContact=e.data.contact
 };
 
 

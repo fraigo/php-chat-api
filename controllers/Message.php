@@ -1,7 +1,7 @@
 <?php
 header("Content-type: text/json");
 
-function get($id){
+function get($id,$rec=""){
     if (!validEmail($id)){
         responseHeader(400,"Bad request");
         die();
@@ -11,7 +11,10 @@ function get($id){
         $messages=explode("\n",file_get_contents("data/chats/$id"));
         foreach($messages as $message){
             if ($message!=""){
-                $result[]=unserialize(base64_decode($message));
+                $msg=unserialize(base64_decode($message));
+                if ($rec=="" || $msg["from"]==$rec || $msg["to"]==$rec){
+                    $result[]=$msg;
+                }
             }
         }
     }
@@ -104,7 +107,7 @@ function push($id){
 
 
 if (function_exists($action)){
-    echo $action($id);
+    echo $action($id,$content);
 }else{
     responseHeader(400,'Bad Request');
     die();
