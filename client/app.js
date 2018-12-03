@@ -124,7 +124,7 @@ var app = new Vue({
         }
     },
     mounted:function(){
-        
+        this.$el.style.display="";
         console.log(this.actions);
     },
     computed:{
@@ -157,7 +157,8 @@ apiCall(query, function(data){
     
 }
 
-
+console.log(document.location.protocol)
+API_ENDPOINT = document.location.protocol + '//' + document.location.host + '/index.php/'
 
 function apiCall(query, callback){
   var url= "";
@@ -167,7 +168,7 @@ function apiCall(query, callback){
       },
       method: "GET"
   }
-  fetch('http://localhost:8000/index.php/'+query, config)
+  fetch(API_ENDPOINT + query, config)
     .then(function(response) {
         return response.json();
     })
