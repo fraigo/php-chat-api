@@ -14,7 +14,9 @@ var app = new Vue({
         menu: false,
         dialog: false,
         valid:false,
-        newMessage:{}
+        newMessage:{},
+        currentContact:{},
+        dialogTitle:"New"
     },
     methods:{
         viewContacts: function(){
@@ -24,11 +26,10 @@ var app = new Vue({
                 self.contacts = data;
             })
         },
-        viewMessages: function(){
+        viewMessages: function(email){
             var self=this
             this.hash = "#contacts"
-            apiCall("Message/get/"+this.user.email+"/",function(data){
-                console.log(data)
+            apiCall("Message/get/"+email+"/",function(data){
                 self.messages = data;
             })
         },
@@ -71,8 +72,12 @@ var app = new Vue({
         },
         newContact(){
             this.newMessage.email="@gmail.com"
-            this.newMessage.email="@gmail.com"
-            
+            this.newMessage.message=""
+            this.dialogTitle = "New Contact message"
+            if (this.currentContact.email && this.hash=="#contacts"){
+                this.newMessage.email=this.currentContact.email;
+                this.dialogTitle = "New Message"
+            }
             this.dialog=true;
         },
         timeAgo(time){
@@ -101,12 +106,15 @@ var app = new Vue({
             return date.toISOString();
         },
         sendContact(){
-            
+            var self=this
             this.dialog = false
             var message=encodeURIComponent(this.newMessage.message)
             var url="Message/push/"+this.newMessage.email+"/?from="+this.user.email+"&message="+message;
             apiCall(url,function(data){
-                console.log(data)
+                self.viewContacts()
+                self.viewMessages(self.newMessage.email)
+                self.newMessage.email="@gmail.com"
+                self.newMessage.message=""
             })
         },
         sendMessage(){
@@ -120,7 +128,8 @@ var app = new Vue({
         },
         contactClick(item){
             console.log(item)
-            this.viewMessages()
+            this.currentContact = item;
+            this.viewMessages(item.email)
         },
         messageClick(item){
             console.log(item)

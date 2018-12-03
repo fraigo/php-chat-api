@@ -27,8 +27,9 @@
     .messageOut .v-list__tile__title{
         text-align:right;
     }
-    .messageOut .v-list__tile__sub-title{
+    .messageOut .v-list__tile__content{
         text-align:right;
+        align-items: flex-end;
     }
     </style>
      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
@@ -99,7 +100,7 @@
         <v-container fluid>
         
         <v-layout row wrap v-if="hash=='#contacts'">
-            <v-flex xs4>
+            <v-flex s4>
             <v-list >
                 <template v-for="item in contacts">
                     <v-list-tile
@@ -123,7 +124,7 @@
                 </template>
             </v-list>
             </v-flex>
-            <v-flex xs8>
+            <v-flex s8>
             <v-list two-line>
                 <template v-for="item in messages">
                     <v-list-tile
@@ -138,15 +139,10 @@
                     </v-list-tile-avatar>
         
                     <v-list-tile-content>
-                        <v-list-tile-sub-title>
-                            <div>
-                                <b><small>{{findContact(item.from).name}} ({{item.from}})</small></b>
-                                <br>
-                                {{item.message}}
-                                <br>
-                                <small>{{timeAgo(item.timestamp)}}</small>
-                            </div>
-                        </v-list-tile-sub-title>
+                        {{item.message}}
+                        <br>
+                        <small>{{timeAgo(item.timestamp)}}</small>
+                
                     </v-list-tile-content>
 
                     <v-list-tile-avatar v-if="item.from==user.email">
@@ -197,7 +193,7 @@
                 class="headline grey lighten-2"
                 primary-title
             >
-                New Contact
+                {{dialogTitle}}
             </v-card-title>
     
             <v-card-text>
