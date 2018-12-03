@@ -6,38 +6,9 @@
     <meta name="google-signin-client_id" content="774131575761-qimgujhl8d3ppsp9l097bcnue8u18h58.apps.googleusercontent.com">
     <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons' rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@1.3.11/dist/vuetify.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
     <style>
-    body {
-        font-family: Roboto, Arial, Helvetica, sans-serif;
-    }
-    .v-btn {
-        text-transform: none
-    }
-    .messageIn{
-        border: 1px solid #ccc;
-        border-radius: 0px 7px 7px 7px;
-        margin-bottom: 5px;
-        margin-right: 20px;
-    }
-    .messageOut{
-        border: 1px solid #ccc;
-        border-radius: 7px 0px 7px 7px;
-        margin-bottom: 5px;
-        margin-left: 20px;
-    }
-    .messageOut .v-list__tile__title{
-        text-align:right;
-    }
-    .messageOut .v-list__tile__content{
-        text-align:right;
-        align-items: flex-end;
-    }
-    .contact-list{
-        border-right: 1px solid #ccc;
-    }
-    .current-contact{
-        background-color: #eee;
-    }
+    
     </style>
      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
@@ -61,7 +32,7 @@
                             <br>
                             <a @click="signOut" href="#" >Sign out</a>
                         </span>
-                        <v-avatar @click="viewProfile">
+                        <v-avatar @click="viewProfile" size="32">
                             <img :src="imageUrl(user.imageUrl)" >
                         </v-avatar>
                     </div>
@@ -106,7 +77,7 @@
         </v-navigation-drawer>
         <v-container fluid>
         
-        <v-layout row wrap v-if="hash=='#contacts'">
+        <v-layout fill-height row wrap v-if="hash=='#contacts'">
             <v-flex sm4 class="contact-list pr-3 hidden-xs-only">
                 <v-list  >
                     <template v-for="item in contacts">
@@ -133,7 +104,7 @@
                     </template>
                 </v-list>
             </v-flex>
-            <v-flex column sm8 class="pl-3">
+            <v-flex sm8 class="pl-3">
                 <v-combobox
                     v-model="currentContact"
                     :items="contacts"
@@ -174,37 +145,37 @@
                         </template>
                 </v-combobox>
                         
-            <v-list two-line>
-                <h2>
-                    {{currentContact.name}}
-                </h2>
-                <template v-for="item in messages">
-                    <v-list-tile
-                    :key="item.id"
-                    avatar
-                    @click="messageClick(item)"
-                    :class="item.from==user.email?'messageOut':'messageIn'"
-                    >
-                    <v-list-tile-avatar v-if="item.from!=user.email">
-                        <img :src="imageUrl(findContact(item.from).imageUrl)">
-                        {{item.click}}
-                    </v-list-tile-avatar>
-        
-                    <v-list-tile-content>
-                        {{item.message}}
-                        <br>
-                        <small>{{timeAgo(item.timestamp)}}</small>
-                
-                    </v-list-tile-content>
+                <v-list id="messageList" two-line style="overflow-y: auto; max-height:calc(100vh - 180px)">
+                    <h2>
+                        {{currentContact.name}}
+                    </h2>
+                    <template v-for="item in messages">
+                        <v-list-tile
+                        :key="item.id"
+                        avatar
+                        @click="messageClick(item)"
+                        :class="item.from==user.email?'messageOut':'messageIn'"
+                        >
+                        <v-list-tile-avatar v-if="item.from!=user.email">
+                            <img :src="imageUrl(findContact(item.from).imageUrl)">
+                            {{item.click}}
+                        </v-list-tile-avatar>
+            
+                        <v-list-tile-content>
+                            {{item.message}}
+                            <br>
+                            <small>{{timeAgo(item.timestamp)}}</small>
+                    
+                        </v-list-tile-content>
 
-                    <v-list-tile-avatar v-if="item.from==user.email">
-                        <img :src="imageUrl(findContact(item.from).imageUrl)">
-                        {{item.click}}
-                    </v-list-tile-avatar>
-                    </v-list-tile>
-                </template>
-            </v-list>
-        </v-flex>
+                        <v-list-tile-avatar v-if="item.from==user.email">
+                            <img :src="imageUrl(findContact(item.from).imageUrl)">
+                            {{item.click}}
+                        </v-list-tile-avatar>
+                        </v-list-tile>
+                    </template>
+                </v-list>
+            </v-flex>
         </v-layout>
 
         <v-layout v-if="hash=='#profile'">

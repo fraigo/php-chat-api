@@ -26,9 +26,12 @@ var app = new Vue({
                 self.contacts = data;
                 self.currentContact=self.findContact(self.currentContact.email);
                 if (!self.currentContact.email){
-                    self.currentContact=data[0]
-                    self.viewMessages(data[0].email)
+                    self.contactClick(data[0])
                 }
+                setTimeout(function(){
+                    var list=document.getElementById("messageList")
+                    list.scrollTop = list.scrollHeight;
+                },500)
             })
         },
         viewMessages: function(email){
@@ -90,9 +93,11 @@ var app = new Vue({
             this.dialog = false
             var message=encodeURIComponent(this.newMessage.message)
             var url="Message/push/"+this.newMessage.email+"/?from="+this.user.email+"&message="+message;
+            console.log(JSON.stringify(self.newMessage));
             apiCall(url,function(data){
+                self.currentContact.email=self.newMessage.email
                 self.viewContacts()
-                self.contact(self.newMessage.email)
+                self.contactClick(self.newMessage)
                 self.newMessage.email="@gmail.com"
                 self.newMessage.message=""
             })
@@ -132,9 +137,18 @@ var app = new Vue({
             return date.toISOString();
         },
         contactClick(item){
-            console.log(item)
-            this.currentContact = item;
-            this.viewMessages(item.email)
+            console.log("item",item)
+            var self=this
+            this.currentContact = item
+            self.messages = []
+            this.viewMessages(this.user.email)
+            postWorker({
+                user: this.user.email,
+                endpoint: API_ENDPOINT,
+                contact : item.email
+            },function(data){
+                self.messages = data
+            })
         },
         messageClick(item){
             console.log(item)
@@ -144,11 +158,13 @@ var app = new Vue({
             console.log(item.click)
             this[item.click]()
             this.menu=false
-        }
+        },
+
     },
     mounted:function(){
         this.$el.style.display="";
         console.log(this.actions);
+        startWorker();
     },
     computed:{
         isLogged:function(){
@@ -200,4 +216,29 @@ function apiCall(query, callback){
             callback(myJson)
         }
     });
+}
+
+
+function startWorker() {
+    if(typeof(Worker) !== "undefined") {
+        if(typeof(w) == "undefined") {
+            w = new Worker("worker.js");
+        }
+    } else {
+        document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Workers...";
+    }
+}
+
+function postWorker(data, callback){
+    w.onmessage = function(event) {
+        callback(event.data)
+    };
+    w.postMessage(data)
+}
+
+function stopWorker() { 
+    if (w){
+        w.terminate();
+        w = undefined;
+    }
 }
