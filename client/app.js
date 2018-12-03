@@ -24,6 +24,11 @@ var app = new Vue({
             this.hash = "#contacts"
             apiCall("Sender/get/"+this.user.email+"/",function(data){
                 self.contacts = data;
+                self.currentContact=self.findContact(self.currentContact.email);
+                if (!self.currentContact.email){
+                    self.currentContact=data[0]
+                    self.viewMessages(data[0].email)
+                }
             })
         },
         viewMessages: function(email){

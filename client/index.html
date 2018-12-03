@@ -101,8 +101,8 @@
         <v-container fluid>
         
         <v-layout row wrap v-if="hash=='#contacts'">
-            <v-flex s4>
-            <v-list >
+            <v-flex sm4 class="hidden-xs-only">
+            <v-list  >
                 <template v-for="item in contacts">
                     <v-list-tile
                     :key="item.id"
@@ -125,8 +125,52 @@
                 </template>
             </v-list>
             </v-flex>
-            <v-flex s8>
+            <v-flex column sm8>
+                    
+                <v-combobox
+                    v-model="currentContact"
+                    :items="contacts"
+                    label=""
+                    @change="contactClick(currentContact)"
+                >
+                    <template slot="selection" slot-scope="data">
+                        <v-layout row
+                            :selected="data.selected"
+                            :disabled="data.disabled"
+                            :key="data.id"
+                            
+                        >
+                            <v-avatar class="ma-2">
+                                <img :src="imageUrl(data.item.imageUrl)">
+                            </v-avatar>
+                            <div class="ma-2">
+                                <b>{{ data.item.name }}</b>
+                                <br>
+                                {{ data.item.email }}
+                            </div>
+                        </v-layout>
+                    </template>
+                    <template slot="item" slot-scope="data">
+                            <v-layout row 
+                                :key="data.item.id"
+                            >
+                                <v-avatar class="ma-2">
+                                    <img :src="imageUrl(data.item.imageUrl)">
+                                </v-avatar>
+                                <div class="ma-2">
+                                    <b>{{ data.item.name }}</b>
+                                    <br>
+                                    {{ data.item.email }}
+                                </div>
+                                
+                            </v-layout>
+                        </template>
+                </v-combobox>
+                        
             <v-list two-line>
+                <h2>
+                    {{currentContact.name}}
+                </h2>
                 <template v-for="item in messages">
                     <v-list-tile
                     :key="item.id"
@@ -169,7 +213,7 @@
                 </p>
             </div>
         </v-layout>
-        <v-layout>
+        <v-layout v-if="isLogged">
             <v-flex>
                     <v-btn
                     absolute
