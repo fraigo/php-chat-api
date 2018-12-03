@@ -80,14 +80,23 @@ var app = new Vue({
             var currentTime = current.getTime();
             var date=new Date(time*1000)
             var diff=(current - date)/1000;
-            if (diff<60){
+            if (diff<5){
                 return "Now"
+            }
+            if (diff<60){
+                return Math.round(diff) + " seconds ago"
             }
             if (diff<120){
                 return "1 minute ago"
             }
             if (diff<3600){
                 return Math.round(diff/60) + " minutes ago"
+            }
+            if (diff<3600*24){
+                return Math.round(diff/3600) + " hours ago"
+            }
+            if (diff<3600*24*30){
+                return Math.round(diff/(3600*24)) + " days ago"
             }
             return date.toISOString();
         },
