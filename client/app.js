@@ -25,7 +25,7 @@ var app = new Vue({
             apiCall("Sender/get/"+this.user.email+"/",function(data){
                 self.contacts = data;
                 self.currentContact=self.findContact(self.currentContact.email);
-                if (!self.currentContact.email){
+                if (!self.currentContact.email && data.length>0){
                     self.contactClick(data[0])
                 }
                 setTimeout(function(){
