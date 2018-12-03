@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="774131575761-qimgujhl8d3ppsp9l097bcnue8u18h58.apps.googleusercontent.com">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons' rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@1.3.11/dist/vuetify.min.css" rel="stylesheet">
+    <style>
+    body {
+        font-family: Roboto, Arial, Helvetica, sans-serif;
+    }
+    .v-btn {
+        text-transform: none
+    }
+    .messageIn{
+        border: 1px solid #ccc;
+        border-radius: 0px 7px 7px 7px;
+        margin-bottom: 5px;
+        margin-right: 20px;
+    }
+    .messageOut{
+        border: 1px solid #ccc;
+        border-radius: 7px 0px 7px 7px;
+        margin-bottom: 5px;
+        margin-left: 20px;
+    }
+    .messageOut .v-list__tile__title{
+        text-align:right;
+    }
+    .messageOut .v-list__tile__sub-title{
+        text-align:right;
+    }
+    </style>
+     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+  <body>
+    <div id="app">
+        <v-toolbar>
+            <v-toolbar-side-icon @click="menu=true"></v-toolbar-side-icon>
+            <v-toolbar-title>Messages</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items >
+                <v-flex>
+                    <div style="
+                    text-align:right;
+                    align-items: center;
+                    display: inline-flex;
+                    vertical-align: middle;" 
+                    v-if="isLogged">
+                        
+                        <span class="pa-2">
+                            <b>{{user.name}}</b>
+                            <br>
+                            <a @click="signOut" href="#" >Sign out</a>
+                        </span>
+                        <v-avatar @click="viewProfile">
+                            <img :src="imageUrl(user.imageUrl)" >
+                        </v-avatar>
+                    </div>
+                </v-flex>
+                <v-btn v-show="!isLogged" @click="signIn" class="g-signin2" data-onsuccess="onSignIn"  flat>
+                    Sign In</v-btn>
+            </v-toolbar-items>
+        </v-toolbar>
+        <v-navigation-drawer 
+            absolute 
+            :value="menu"
+            >
+            <v-toolbar flat>
+                <v-toolbar-side-icon @click="menu=false"></v-toolbar-side-icon>
+                <v-list>
+                <v-list-tile>
+                    <v-list-tile-title class="title">
+                    Messages
+                    </v-list-tile-title>
+                </v-list-tile>
+                </v-list>
+            </v-toolbar>
+        
+            <v-divider></v-divider>
+        
+            <v-list dense class="pt-0">
+                <v-list-tile
+                v-for="item in actions"
+                :key="item.title"
+                @click="menuClick(item)"
+                v-show="isVisible(item)"
+                >
+                <v-list-tile-action>
+                    <v-icon>{{ item.icon }}</v-icon>
+                </v-list-tile-action>
+        
+                <v-list-tile-content>
+                    <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                </v-list-tile-content>
+                </v-list-tile>
+            </v-list>
+        </v-navigation-drawer>
+        <v-container fluid>
+        
+        <v-layout row wrap v-if="hash=='#contacts'">
+            <v-flex xs6>
+            <v-list >
+                <template v-for="item in contacts">
+                    <v-list-tile
+                    :key="item.id"
+                    avatar
+                    @click="contactClick(item)"
+                    >
+                    <v-list-tile-avatar>
+                        <img :src="imageUrl(item.imageUrl)">
+                        {{item.click}}
+                    </v-list-tile-avatar>
+        
+                    <v-list-tile-content>
+                        <v-list-tile-title v-html="item.name"></v-list-tile-title>
+                        <v-list-tile-sub-title v-html="item.email"></v-list-tile-sub-title>
+                    </v-list-tile-content>
+                    <v-list-tile-action>
+                        <v-icon >message</v-icon>
+                    </v-list-tile-action>
+                    </v-list-tile>
+                </template>
+            </v-list>
+            </v-flex>
+            <v-flex xs6>
+            <v-list two-line>
+                <template v-for="item in messages">
+                    <v-list-tile
+                    :key="item.id"
+                    avatar
+                    @click="messageClick(item)"
+                    :class="item.from==user.email?'messageOut':'messageIn'"
+                    >
+                    <v-list-tile-avatar v-if="item.from!=user.email">
+                        <img :src="imageUrl(findContact(item.from).imageUrl)">
+                        {{item.click}}
+                    </v-list-tile-avatar>
+        
+                    <v-list-tile-content>
+                        <v-list-tile-sub-title>
+                            <div>
+                                <b><small>{{findContact(item.from).name}} ({{item.from}})</small></b>
+                                <br>
+                                {{item.message}}
+                                <br>
+                                <small>{{timeAgo(item.timestamp)}}</small>
+                            </div>
+                        </v-list-tile-sub-title>
+                    </v-list-tile-content>
+
+                    <v-list-tile-avatar v-if="item.from==user.email">
+                        <img :src="imageUrl(findContact(item.from).imageUrl)">
+                        {{item.click}}
+                    </v-list-tile-avatar>
+                    </v-list-tile>
+                </template>
+            </v-list>
+        </v-flex>
+        </v-layout>
+
+        <v-layout v-if="hash=='#profile'">
+            <div>
+                <v-avatar :size="120">
+                    <img :src="imageUrl(user.imageUrl)" >
+                </v-avatar>
+            </div>
+            <div>
+                <h3>{{user.name}}</h3>
+                <p>
+                {{user.email}}
+                </p>
+            </div>
+        </v-layout>
+        <v-layout>
+            <v-flex>
+                    <v-btn
+                    absolute
+                    dark
+                    fab
+                    right
+                    color="pink"
+                    style="bottom: 20px"
+                    @click="newContact"
+                  >
+                    <v-icon >add</v-icon>
+                  </v-btn>
+            </v-flex>
+        </v-layout>
+        <v-dialog
+            v-model="dialog"
+            width="500"
+            data-app="app"
+        >
+            <v-card>
+            <v-card-title
+                class="headline grey lighten-2"
+                primary-title
+            >
+                New Contact
+            </v-card-title>
+    
+            <v-card-text>
+                
+                <v-form v-model="valid">
+                    
+                    <v-text-field
+                        v-model="newMessage.email"
+                        label="E-mail"
+                        required
+                    ></v-text-field>
+                    <v-text-field
+                        v-model="newMessage.message"
+                        label="Message"
+                        required
+                    ></v-text-field>
+                </v-form>
+
+
+            </v-card-text>
+    
+            <v-divider></v-divider>
+    
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                color="primary"
+                flat
+                @click="sendContact"
+                >
+                Send
+                </v-btn>
+            </v-card-actions>
+            </v-card>
+        </v-dialog>
+        </v-container>
+    </div>
+    
+    <script src="https://apis.google.com/js/platform.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+    <script src="app.js"></script>
+    <script src="google.js"></script>
+  </body>
+</html>

@@ -1,7 +1,7 @@
 <?php
 header("Content-type: text/json");
 
-if ($action == "get"){
+function get($id){
     if (!validEmail($id)){
         responseHeader(400,"Bad request");
         die();
@@ -17,7 +17,8 @@ if ($action == "get"){
     }
     echo json_encode($result);
 }
-if ($action == "push"){
+    
+function push($id){
     if (!validEmail($id)){
         responseHeader(400,"Bad request");
         die();
@@ -39,7 +40,7 @@ if ($action == "push"){
 
     $senders=[];
     if (file_exists("data/senders/$id")){
-        $ser=(file_get_contents("senders/$id"));
+        $ser=(file_get_contents("data/senders/$id"));
         $senders=unserialize(base64_decode($ser));
     }
     $sender=@$senders[$from];
@@ -52,7 +53,7 @@ if ($action == "push"){
         $sender["imageUrl"]="";   
     }
     if (file_exists("data/users/$from")){
-        $ser=(file_get_contents("users/$from"));
+        $ser=(file_get_contents("data/users/$from"));
         $user=unserialize(base64_decode($ser));
         $sender["name"]=$user["name"];
         $sender["imageUrl"]=$user["imageUrl"];
@@ -73,7 +74,7 @@ if ($action == "push"){
 
     $senders=[];
     if (file_exists("data/senders/$from")){
-        $ser=(file_get_contents("senders/$from"));
+        $ser=(file_get_contents("data/senders/$from"));
         $senders=unserialize(base64_decode($ser));
     }
     $sender=@$senders[$id];
@@ -86,7 +87,7 @@ if ($action == "push"){
         $sender["imageUrl"]="";
     }
     if (file_exists("data/users/$id")){
-        $ser=(file_get_contents("users/$id"));
+        $ser=(file_get_contents("data/users/$id"));
         $user=unserialize(base64_decode($ser));
         $sender["name"]=$user["name"];
         $sender["imageUrl"]=$user["imageUrl"];
@@ -96,4 +97,12 @@ if ($action == "push"){
 
     $result["timestamp"]=$timestamp;
     echo json_encode($result);
+}
+
+
+if (function_exists($action)){
+    echo $action($id);
+}else{
+    responseHeader(400,'Bad Request');
+    die();
 }
