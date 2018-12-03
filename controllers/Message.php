@@ -61,39 +61,42 @@ function push($id){
     $senders[$from] = $sender;
     file_put_contents("data/senders/$id",base64_encode(serialize($senders)));    
 
-    $f=fopen("data/chats/$from","a");
-    $result = [];
-    $result["from"]=$from;
-    $result["to"]=$id;
-    $result["timestamp"]=time();
-    $result["visible"]=1;
-    $result["message"]=$message;
-    fwrite($f,base64_encode(serialize($result)));
-    fwrite($f,"\n");
-    fclose($f);
-
-    $senders=[];
-    if (file_exists("data/senders/$from")){
-        $ser=(file_get_contents("data/senders/$from"));
-        $senders=unserialize(base64_decode($ser));
+    if ($from != $id){
+        $f=fopen("data/chats/$from","a");
+        $result = [];
+        $result["from"]=$from;
+        $result["to"]=$id;
+        $result["timestamp"]=time();
+        $result["visible"]=1;
+        $result["message"]=$message;
+        fwrite($f,base64_encode(serialize($result)));
+        fwrite($f,"\n");
+        fclose($f);
+    
+        $senders=[];
+        if (file_exists("data/senders/$from")){
+            $ser=(file_get_contents("data/senders/$from"));
+            $senders=unserialize(base64_decode($ser));
+        }
+        $sender=@$senders[$id];
+        if (!$sender){
+            $sender=[];
+            $sender["id"]=10000+count($senders);
+            $sender["email"]=$id;
+            $sender["name"]=$id;
+            $sender["number"]="";
+            $sender["imageUrl"]="";
+        }
+        if (file_exists("data/users/$id")){
+            $ser=(file_get_contents("data/users/$id"));
+            $user=unserialize(base64_decode($ser));
+            $sender["name"]=$user["name"];
+            $sender["imageUrl"]=$user["imageUrl"];
+        }
+        $senders[$id] = $sender;
+        file_put_contents("data/senders/$from",base64_encode(serialize($senders)));   
     }
-    $sender=@$senders[$id];
-    if (!$sender){
-        $sender=[];
-        $sender["id"]=10000+count($senders);
-        $sender["email"]=$id;
-        $sender["name"]=$id;
-        $sender["number"]="";
-        $sender["imageUrl"]="";
-    }
-    if (file_exists("data/users/$id")){
-        $ser=(file_get_contents("data/users/$id"));
-        $user=unserialize(base64_decode($ser));
-        $sender["name"]=$user["name"];
-        $sender["imageUrl"]=$user["imageUrl"];
-    }
-    $senders[$id] = $sender;
-    file_put_contents("data/senders/$from",base64_encode(serialize($senders)));    
+     
 
     $result["timestamp"]=$timestamp;
     echo json_encode($result);
