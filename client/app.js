@@ -68,7 +68,7 @@ var app = new Vue({
 
         },
         signOut(){
-            this.user = null,
+            this.user = {},
             this.contacts=[]
             signOut()
         },
@@ -84,6 +84,27 @@ var app = new Vue({
                 this.dialogTitle = "New Message"
             }
             this.dialog=true;
+        },
+        sendContact(){
+            var self=this
+            this.dialog = false
+            var message=encodeURIComponent(this.newMessage.message)
+            var url="Message/push/"+this.newMessage.email+"/?from="+this.user.email+"&message="+message;
+            apiCall(url,function(data){
+                self.viewContacts()
+                self.contact(self.newMessage.email)
+                self.newMessage.email="@gmail.com"
+                self.newMessage.message=""
+            })
+        },
+        sendMessage(){
+            
+        },
+        isVisible:function(item){
+            if (item.guest){
+                return !this.isLogged
+            }
+            return this.isLogged
         },
         timeAgo(time){
             var current = new Date();
@@ -109,27 +130,6 @@ var app = new Vue({
                 return Math.round(diff/(3600*24)) + " days ago"
             }
             return date.toISOString();
-        },
-        sendContact(){
-            var self=this
-            this.dialog = false
-            var message=encodeURIComponent(this.newMessage.message)
-            var url="Message/push/"+this.newMessage.email+"/?from="+this.user.email+"&message="+message;
-            apiCall(url,function(data){
-                self.viewContacts()
-                self.viewMessages(self.newMessage.email)
-                self.newMessage.email="@gmail.com"
-                self.newMessage.message=""
-            })
-        },
-        sendMessage(){
-            
-        },
-        isVisible:function(item){
-            if (item.guest){
-                return !this.isLogged
-            }
-            return this.isLogged
         },
         contactClick(item){
             console.log(item)

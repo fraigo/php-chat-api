@@ -32,6 +32,12 @@
         text-align:right;
         align-items: flex-end;
     }
+    .contact-list{
+        border-right: 1px solid #ccc;
+    }
+    .current-contact{
+        background-color: #eee;
+    }
     </style>
      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
@@ -101,32 +107,33 @@
         <v-container fluid>
         
         <v-layout row wrap v-if="hash=='#contacts'">
-            <v-flex sm4 class="hidden-xs-only">
-            <v-list  >
-                <template v-for="item in contacts">
-                    <v-list-tile
-                    :key="item.id"
-                    avatar
-                    @click="contactClick(item)"
-                    >
-                    <v-list-tile-avatar>
-                        <img :src="imageUrl(item.imageUrl)">
-                        {{item.click}}
-                    </v-list-tile-avatar>
-        
-                    <v-list-tile-content>
-                        <v-list-tile-title v-html="item.name"></v-list-tile-title>
-                        <v-list-tile-sub-title v-html="item.email"></v-list-tile-sub-title>
-                    </v-list-tile-content>
-                    <v-list-tile-action>
-                        <v-icon >message</v-icon>
-                    </v-list-tile-action>
-                    </v-list-tile>
-                </template>
-            </v-list>
+            <v-flex sm4 class="contact-list pr-3 hidden-xs-only">
+                <v-list  >
+                    <template v-for="item in contacts">
+                        <v-list-tile
+                        :key="item.id"
+                        avatar
+                        @click="contactClick(item)"
+                        :class="currentContact.email==item.email?'current-contact':''"
+                        >
+                        <v-list-tile-avatar>
+                            <img :src="imageUrl(item.imageUrl)">
+                            {{item.click}}
+                        </v-list-tile-avatar>
+            
+                        <v-list-tile-content>
+                            <v-list-tile-title v-html="item.name"></v-list-tile-title>
+                            <v-list-tile-sub-title v-html="item.email"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                        <v-list-tile-action>
+                            <v-icon v-if="currentContact.email==item.email">message</v-icon>
+                            <v-icon v-if="currentContact.email!=item.email">chat_bubble_outline</v-icon>
+                        </v-list-tile-action>
+                        </v-list-tile>
+                    </template>
+                </v-list>
             </v-flex>
-            <v-flex column sm8>
-                    
+            <v-flex column sm8 class="pl-3">
                 <v-combobox
                     v-model="currentContact"
                     :items="contacts"
@@ -140,7 +147,7 @@
                             :key="data.id"
                             
                         >
-                            <v-avatar class="ma-2">
+                            <v-avatar class="ma-2" size="32">
                                 <img :src="imageUrl(data.item.imageUrl)">
                             </v-avatar>
                             <div class="ma-2">
@@ -154,7 +161,7 @@
                             <v-layout row 
                                 :key="data.item.id"
                             >
-                                <v-avatar class="ma-2">
+                                <v-avatar class="ma-2" size="32">
                                     <img :src="imageUrl(data.item.imageUrl)">
                                 </v-avatar>
                                 <div class="ma-2">
