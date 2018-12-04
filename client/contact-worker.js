@@ -1,6 +1,7 @@
 var i=0;
 var currentUser = null
 var API_ENDPOINT = null
+var API_HEADERS = {}
 
 function timedCall() {
     console.log("contact-worker ",i, currentUser)
@@ -16,15 +17,14 @@ function timedCall() {
 onmessage = function(e) {
     API_ENDPOINT=e.data.endpoint
     currentUser=e.data.user
+    API_HEADERS=e.data.headers
 };
 
 
 function apiCall(query, callback){
     var url= "";
     var config = {
-        headers: {
-  
-        },
+        headers: API_HEADERS,
         method: "GET"
     }
     fetch(API_ENDPOINT + query, config)

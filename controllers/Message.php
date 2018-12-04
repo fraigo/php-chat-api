@@ -1,8 +1,7 @@
 <?php
-header("Content-type: text/json");
 
 function get($id,$rec=""){
-    if (!validEmail($id)){
+    if (!validUser($id)){
         responseHeader(400,"Bad request");
         die();
     }
@@ -18,11 +17,11 @@ function get($id,$rec=""){
             }
         }
     }
-    echo json_encode($result);
+    responseJson($result);
 }
     
 function push($id){
-    if (!validEmail($id)){
+    if (!validUser($id)){
         responseHeader(400,"Bad request");
         die();
     }
@@ -102,7 +101,7 @@ function push($id){
      
 
     $result["timestamp"]=$timestamp;
-    echo json_encode($result);
+    responseJson($result);
 }
 
 

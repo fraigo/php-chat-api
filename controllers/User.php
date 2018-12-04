@@ -2,7 +2,7 @@
 header("Content-type: text/json");
 
 if ($action=="register"){
-    if (!validEmail($id)){
+    if (!validUser($id)){
         responseHeader(400,"Bad request");
         die();
     }
@@ -23,7 +23,7 @@ if ($action=="register"){
 
 if ($action=="get"){
     $user=[];
-    if (!validEmail($id)){
+    if (!validUser($id)){
         responseHeader(400,"Bad request");
         die();
     }

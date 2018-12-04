@@ -180,14 +180,16 @@ function onRegisterUser(googleUser){
     var imageLink=encodeURI(profile.getImageUrl());
     var token=encodeURI(googleUser.getAuthResponse().id_token);
 
-    var query="User/register/{email}/?name={name}&imageUrl={imageLink}&token={token}"
+    var query="User/register/{email}/?name={name}&imageUrl={imageLink}"
         .replace("{email}",email)
         .replace("{name}",name)
         .replace("{imageLink}",imageLink)
         .replace("{token}",token)
     console.log(query);
-
-    apiCall(query, function(data){
+    API_HEADERS={
+        'Authentication': 'Bearer '+token
+    }
+    apiFullCall("GET",query,API_HEADERS, function(data){
         console.log(data)
         app.user = data
         app.viewContacts()
@@ -204,14 +206,22 @@ function onRegisterUser(googleUser){
 
 console.log(document.location.protocol)
 API_ENDPOINT = document.location.protocol + '//' + document.location.host + '/index.php/'
+API_HEADERS= {}
 
-function apiCall(query, callback){
+function apiCall( query, callback){
+    var header={}
+    if (API_HEADERS){
+        header=API_HEADERS
+    }
+    apiFullCall("GET", query, header, callback);
+}
+
+
+function apiFullCall(method, query, headers,  callback){
   var url= "";
   var config = {
-      headers: {
-
-      },
-      method: "GET"
+      headers: headers,
+      method: method
   }
   fetch(API_ENDPOINT + query, config)
     .then(function(response) {
@@ -239,6 +249,7 @@ function startWorkers() {
 }
 
 function messageWorker(data, callback){
+    data.headers=API_HEADERS
     mw.onmessage = function(event) {
         callback(event.data)
     };
@@ -246,6 +257,7 @@ function messageWorker(data, callback){
 }
 
 function contactWorker(data, callback){
+    data.headers=API_HEADERS
     cw.onmessage = function(event) {
         callback(event.data)
     };

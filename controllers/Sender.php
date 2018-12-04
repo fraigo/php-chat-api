@@ -4,7 +4,7 @@ header("Content-type: text/json");
 
 if ($action == "get"){
     $result = [];
-    if (!validEmail($id)){
+    if (!validUser($id)){
         responseHeader(400,"Bad request");
         die();
     }
