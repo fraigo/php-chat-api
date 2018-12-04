@@ -20,9 +20,13 @@ function validUser($email){
             list($type,$id_token) = explode(" ",$auth);
         }
     }
+    $id_client = @$_REQUEST["client"];
+    if (!$id_client){
+        $id_client=getHeader("Client");
+    }
     $result=false;
     if ($id_token){
-        $result=validToken($id_token,$email);
+        $result=validToken($id_token,$id_client,$email);
     }
     if ($result){
         return true;
@@ -70,8 +74,7 @@ function fileLines($file){
     return explode("\n",file_get_contents($file));
 }
 
-function validToken($id_token,$email){
-    $CLIENT_ID="774131575761-qimgujhl8d3ppsp9l097bcnue8u18h58.apps.googleusercontent.com";
+function validToken($id_token,$CLIENT_ID,$email){
     $client = new Google_Client(['client_id' => $CLIENT_ID]);  // Specify the CLIENT_ID of the app that accesses the backend
     $payload = $client->verifyIdToken($id_token);
     if ($payload) {
