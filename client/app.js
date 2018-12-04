@@ -187,7 +187,8 @@ function onRegisterUser(googleUser){
         .replace("{token}",token)
     console.log(query);
     API_HEADERS={
-        'Authentication': 'Bearer '+token
+        'Authentication': 'Bearer '+token,
+        'Client': getMeta("google-signin-client_id")
     }
     apiFullCall("GET",query,API_HEADERS, function(data){
         console.log(data)
@@ -270,3 +271,15 @@ function stopWorker() {
         mw = undefined;
     }
 }
+
+function getMeta(metaName) {
+    const metas = document.getElementsByTagName('meta');
+  
+    for (let i = 0; i < metas.length; i++) {
+      if (metas[i].getAttribute('name') === metaName) {
+        return metas[i].getAttribute('content');
+      }
+    }
+  
+    return '';
+  }
