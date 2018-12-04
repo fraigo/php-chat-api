@@ -29,3 +29,10 @@ body {
 .current-contact{
     background-color: #eee;
 }
+.contact-selection{
+    background-color: #eee; 
+    box-shadow: 0px 0px 10px #ccc;
+}
+.v-input__slot{
+    border-style: initial;
+}
