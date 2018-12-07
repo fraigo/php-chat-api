@@ -16,7 +16,7 @@ if ($action=="register"){
         $ser=(file_get_contents("data/users/$email"));
         $user=unserialize(base64_decode($ser));
     }else{
-        createMessage($email,"echo@imessenger.com",$email,"Welcome to iMessenger.\nThis is an automated echo service.");
+        messageResponder($email,"echo@imessenger.com","");
     }
     @$user["imageUrl"]=$_REQUEST["imageUrl"]?:$user["imageUrl"];
     @$user["name"]=$_REQUEST["name"]?:$user["name"];
