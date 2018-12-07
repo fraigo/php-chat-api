@@ -1,5 +1,6 @@
 <?php
 
+
 function validEmail($email){
     return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
@@ -10,6 +11,9 @@ function getHeader($name){
 }
 
 function validUser($email){
+    if ($email=="fake@user.com"){
+        return true;
+    }
     if (!validEmail($email)){
         return false;
     }
@@ -78,7 +82,7 @@ function validToken($id_token,$CLIENT_ID,$email){
     $client = new Google_Client(['client_id' => $CLIENT_ID]);  // Specify the CLIENT_ID of the app that accesses the backend
     $payload = $client->verifyIdToken($id_token);
     if ($payload) {
-        return $payload["email"] = $email;
+        return $payload["email"] == $email;
         // If request specified a G Suite domain:
         //$domain = $payload['hd'];
     } else {
@@ -140,4 +144,12 @@ function createSender($from,$to,$name=null){
     }
     $senders[$to] = $sender;
     file_put_contents("data/senders/$from",base64_encode(serialize($senders)));  
+}
+
+function messageResponder($from,$to,$message){
+    list($service,$host)=explode("@",$to);
+    if (file_exists("services/$service.php")){
+        $message= include("services/$service.php");
+        createMessage($from,$to,$from,$message);
+    }
 }

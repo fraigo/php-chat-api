@@ -92,7 +92,7 @@ var app = new Vue({
             var self=this
             this.dialog = false
             var message=encodeURIComponent(this.newMessage.message)
-            var url="Message/push/"+this.newMessage.email+"/?from="+this.user.email+"&message="+message;
+            var url="Message/push/"+this.user.email+"/?to="+this.newMessage.email+"&message="+message;
             console.log(JSON.stringify(self.newMessage));
             apiCall(url,function(data){
                 self.currentContact.email=self.newMessage.email
@@ -173,12 +173,11 @@ var app = new Vue({
     }
 })
     
-function onRegisterUser(googleUser){
-    var profile = googleUser.getBasicProfile();
-    var email=profile.getEmail();
-    var name=encodeURI(profile.getName());
-    var imageLink=encodeURI(profile.getImageUrl());
-    var token=encodeURI(googleUser.getAuthResponse().id_token);
+function onRegisterUser(loggedUser){
+    var email=loggedUser.email;
+    var name=loggedUser.name;
+    var imageLink=loggedUser.imageUrl;
+    var token=encodeURI(loggedUser.token);
 
     var query="User/register/{email}/?name={name}&imageUrl={imageLink}"
         .replace("{email}",email)
@@ -226,10 +225,21 @@ function apiFullCall(method, query, headers,  callback){
   }
   fetch(API_ENDPOINT + query, config)
     .then(function(response) {
+        if(!response.ok){
+            console.log(response)
+            console.log("Error "+response.status+" : "+ response.statusText);
+            var data=response.json();
+            alert(response.text());
+            if (data && data.error){
+                
+                alert(data.error);
+            }
+            return null;
+        }
         return response.json();
     })
     .then(function(myJson) {
-        if (callback){
+        if (myJson && callback){
             callback(myJson)
         }
     });

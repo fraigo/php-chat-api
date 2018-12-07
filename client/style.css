@@ -4,6 +4,9 @@ body {
 .v-btn {
     text-transform: none
 }
+.messageContent{
+    white-space: pre-wrap;
+}
 .messageIn{
     border: 1px solid #ccc;
     border-radius: 0px 7px 7px 7px;
@@ -16,13 +19,15 @@ body {
     margin-bottom: 5px;
     margin-left: 20px;
 }
-.messageOut .v-list__tile__title{
+
+.messageOut .v-list__tile__title, .messageOut .ist__tile__title{
     text-align:right;
 }
-.messageOut .v-list__tile__content{
+.messageOut .v-list__tile__content, .messageOut .list__tile__content{
     text-align:right;
     align-items: flex-end;
 }
+
 .contact-list{
     border-right: 1px solid #ccc;
 }
@@ -37,6 +42,3 @@ body {
     border-style: initial;
 }
 
-.messageContent{
-    white-space: pre-wrap;
-}

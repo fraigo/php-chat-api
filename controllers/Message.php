@@ -1,13 +1,14 @@
 <?php
 
 function get($id,$rec=""){
-    if (!validUser($id)){
+    $email=strtolower($id);
+    if (!validUser($email)){
         responseHeader(400,"Bad request");
         die();
     }
     $result = [];
-    if (file_exists("data/chats/$id")){
-        $messages=explode("\n",file_get_contents("data/chats/$id"));
+    if (file_exists("data/chats/$email")){
+        $messages=explode("\n",file_get_contents("data/chats/$email"));
         foreach($messages as $message){
             if ($message!=""){
                 $msg=unserialize(base64_decode($message));
@@ -21,25 +22,33 @@ function get($id,$rec=""){
 }
     
 function push($id){
-    if (!validUser($id)){
+    $from=strtolower($id);
+    $to=strtolower($_REQUEST["to"]);
+    if (!validUser($from)){
         responseHeader(400,"Bad request");
+        responseJson([
+            "error" => "Invalid user"
+        ]);
+        die();
+    }
+    if (!validEmail($to)){
+        responseHeader(400,"Bad request");
+        responseJson([
+            "error" => "Invalid email recipient"
+        ]);
         die();
     }
     $timestamp=time();
-    $from=$_REQUEST["from"];
     $message=$_REQUEST["message"];
 
-    createMessage($id, $from, $id, $message);
-    createSender($id,$from);
+    createMessage($to, $from, $to, $message);
+    createSender($to,$from);
     
-    if ($from != $id){
-        createMessage($from, $from, $id, $message);
-        createSender($from,$id);  
+    if ($from != $to){
+        createMessage($from, $from, $to, $message);
+        createSender($from,$to);  
     }
-    if ($id=="echo@imessenger.com"){
-        $ip = $_SERVER["REMOTE_ADDR"];
-        createMessage($from,"echo@imessenger.com",$from,"You sent: ".$message."\nFrom: $ip");
-    }
+    messageResponder($from,$to,$message);
     
     $result["timestamp"]=$timestamp;
     responseJson($result);

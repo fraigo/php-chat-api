@@ -2,37 +2,39 @@
 header("Content-type: text/json");
 
 if ($action=="register"){
-    if (!validUser($id)){
+    $email=strtolower($id);
+    if (!validUser($email)){
         responseHeader(400,"Bad request");
         die();
     }
     $user=[
-        "email" => $id,
+        "email" => $email,
         "imageUrl" => "",
-        "name" => $id
+        "name" => $email
     ];
-    if (file_exists("data/users/$id")){
-        $ser=(file_get_contents("data/users/$id"));
+    if (file_exists("data/users/$email")){
+        $ser=(file_get_contents("data/users/$email"));
         $user=unserialize(base64_decode($ser));
     }else{
-        createMessage($id,"echo@imessenger.com",$id,"Welcome to iMessenger.\nThis is an automated echo service.");
+        createMessage($email,"echo@imessenger.com",$email,"Welcome to iMessenger.\nThis is an automated echo service.");
     }
     @$user["imageUrl"]=$_REQUEST["imageUrl"]?:$user["imageUrl"];
     @$user["name"]=$_REQUEST["name"]?:$user["name"];
-    file_put_contents("data/users/$id",base64_encode(serialize($user)));
-    createSender($id,"echo@imessenger.com","Echo Service");
-    createSender("echo@imessenger.com",$id);
+    file_put_contents("data/users/$email",base64_encode(serialize($user)));
+    createSender($email,"echo@imessenger.com","Echo Service");
+    createSender("echo@imessenger.com",$email);
     echo json_encode($user);
 }
 
 if ($action=="get"){
+    $email=strtolower($id);
     $user=[];
-    if (!validUser($id)){
+    if (!validUser($email)){
         responseHeader(400,"Bad request");
         die();
     }
-    if (file_exists("data/users/$id")){
-        $ser=(file_get_contents("data/users/$id"));
+    if (file_exists("data/users/$email")){
+        $ser=(file_get_contents("data/users/$email"));
         $user=unserialize(base64_decode($ser));
     }
     echo json_encode($user);
