@@ -11,14 +11,19 @@ function getHeader($name){
 }
 
 function getIdToken(){
-    $id_token = @$_REQUEST["id_token"];
-    if (!$id_token){
-        $auth=getHeader("Authentication");
-        if ($auth){
-            list($type,$id_token) = explode(" ",$auth);
-        }
+    $auth=getHeader("Authentication");
+    if ($auth){
+        list($type,$id_token) = explode(" ",$auth);
     }
     return $id_token;
+}
+
+function getClientId(){
+    return getHeader("Client");
+}
+
+function getAuthToken(){
+    getHeader("AuthToken");
 }
 
 
@@ -29,12 +34,9 @@ function validUser($email){
     if (!validEmail($email)){
         return false;
     }
-    
-    $id_client = @$_REQUEST["client"];
-    if (!$id_client){
-        $id_client=getHeader("Client");
-    }
     $result=false;
+    
+    $id_client = getCLientId();
     $id_token = getIdToken();
     if ($id_token){
         $result=validToken($id_token,$id_client,$email);
@@ -68,23 +70,6 @@ function responseJson($data){
     echo json_encode($data);
 }
 
-
-function dirContent($dir){
-    $files=scandir($dir);
-    $ignore=[".", "..", ".gitignore",".DS_Store"];
-    $result=[];
-    foreach($files as $file){
-        if (!in_array($file,$ignore)){
-            $result[]=$file;
-        }
-    }
-    return $result;
-}
-
-function fileLines($file){
-    return explode("\n",file_get_contents($file));
-}
-
 function validToken($id_token,$CLIENT_ID,$email){
     $client = new Google_Client(['client_id' => $CLIENT_ID]);  // Specify the CLIENT_ID of the app that accesses the backend
     $payload = $client->verifyIdToken($id_token);
@@ -98,8 +83,8 @@ function validToken($id_token,$CLIENT_ID,$email){
 
 
 function getContacts(){
-    $authToken = getHeader("AuthToken");
-    $id_client = getHeader("Client");
+    $authToken = getAuthToken();
+    $id_client = getClientId();
     $client = new Google_Client(['client_id' => $id_client]);
     $client->setScopes(Google_Service_PeopleService::CONTACTS_READONLY);
     $client->setAccessToken($authToken);
@@ -140,6 +125,22 @@ if (!function_exists('getallheaders'))
     } 
 } 
 
+
+function dirContent($dir){
+    $files=scandir($dir);
+    $ignore=[".", "..", ".gitignore",".DS_Store"];
+    $result=[];
+    foreach($files as $file){
+        if (!in_array($file,$ignore)){
+            $result[]=$file;
+        }
+    }
+    return $result;
+}
+
+function fileLines($file){
+    return explode("\n",file_get_contents($file));
+}
 
 function createMessage($store, $from, $to, $message){
     $f=fopen("data/chats/$store","a");

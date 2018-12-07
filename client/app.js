@@ -29,7 +29,7 @@ var app = new Vue({
             apiCall("Sender/get/"+this.user.email+"/",function(data){
                 self.contacts = data;
                 self.currentContact=self.findContact(self.currentContact.email);
-                if (!self.currentContact.email && data.length>0){
+                if ((!self.currentContact || !self.currentContact.email) && data.length>0){
                     self.contactClick(data[0])
                 }
                 setTimeout(function(){
@@ -169,7 +169,10 @@ var app = new Vue({
             this[item.click]()
             this.menu=false
         },
-
+        findItem(ev){
+            console.log("Find item")
+            console.log(ev)
+        }
     },
     mounted:function(){
         this.$el.style.display="";
