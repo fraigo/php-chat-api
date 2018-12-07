@@ -205,8 +205,8 @@ function onRegisterUser(loggedUser){
     console.log(query);
     API_HEADERS={
         'Authentication': 'Bearer '+idToken,
-        'Client': getMeta("google-signin-client_id"),
-        'AuthToken': authToken
+        'Client-Id': getMeta("google-signin-client_id"),
+        'Auth-Token': authToken
 
     }
     apiFullCall("GET",query,API_HEADERS, function(data){

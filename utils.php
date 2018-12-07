@@ -19,13 +19,11 @@ function getIdToken(){
 }
 
 function getClientId(){
-    return getHeader("Client");
+    return getHeader("Client-Id");
 }
 
 function getAuthToken(){
-    responseJson(getallheaders());
-    die();
-    return getHeader("AuthToken");
+    return getHeader("Auth-Token");
 }
 
 
