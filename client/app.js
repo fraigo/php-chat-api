@@ -187,17 +187,21 @@ function onRegisterUser(loggedUser){
     var email=loggedUser.email;
     var name=loggedUser.name;
     var imageLink=loggedUser.imageUrl;
-    var token=encodeURI(loggedUser.token);
+    var idToken=loggedUser.idToken;
+    var authToken=loggedUser.authToken;
+    console.log(loggedUser);
 
     var query="User/register/{email}/?name={name}&imageUrl={imageLink}"
         .replace("{email}",email)
         .replace("{name}",name)
         .replace("{imageLink}",imageLink)
-        .replace("{token}",token)
+        .replace("{token}",idToken)
     console.log(query);
     API_HEADERS={
-        'Authentication': 'Bearer '+token,
-        'Client': getMeta("google-signin-client_id")
+        'Authentication': 'Bearer '+idToken,
+        'Client': getMeta("google-signin-client_id"),
+        'AuthToken': authToken
+
     }
     apiFullCall("GET",query,API_HEADERS, function(data){
         console.log(data)

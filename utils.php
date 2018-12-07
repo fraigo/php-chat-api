@@ -10,13 +10,7 @@ function getHeader($name){
     return @$headers[$name];
 }
 
-function validUser($email){
-    if ($email=="fake@user.com"){
-        return true;
-    }
-    if (!validEmail($email)){
-        return false;
-    }
+function getIdToken(){
     $id_token = @$_REQUEST["id_token"];
     if (!$id_token){
         $auth=getHeader("Authentication");
@@ -24,11 +18,24 @@ function validUser($email){
             list($type,$id_token) = explode(" ",$auth);
         }
     }
+    return $id_token;
+}
+
+
+function validUser($email){
+    if ($email=="fake@user.com"){
+        return true;
+    }
+    if (!validEmail($email)){
+        return false;
+    }
+    
     $id_client = @$_REQUEST["client"];
     if (!$id_client){
         $id_client=getHeader("Client");
     }
     $result=false;
+    $id_token = getIdToken();
     if ($id_token){
         $result=validToken($id_token,$id_client,$email);
     }
@@ -83,11 +90,37 @@ function validToken($id_token,$CLIENT_ID,$email){
     $payload = $client->verifyIdToken($id_token);
     if ($payload) {
         return $payload["email"] == $email;
-        // If request specified a G Suite domain:
-        //$domain = $payload['hd'];
+        
     } else {
         return null;
     }
+}
+
+
+function getContacts(){
+    $authToken = getHeader("AuthToken");
+    $id_client = getHeader("Client");
+    $client = new Google_Client(['client_id' => $id_client]);
+    $client->setScopes(Google_Service_PeopleService::CONTACTS_READONLY);
+    $client->setAccessToken($authToken);
+    $service = new Google_Service_PeopleService($client);
+    $optParams = array(
+        'pageSize' => 2000,
+        'personFields' => 'names,emailAddresses',
+      );
+    $results = $service->people_connections->listPeopleConnections('people/me', $optParams);
+    $contacts=[];
+    foreach($results->connections as $conn){
+        $name=@$conn->names[0]->displayName;
+        $email=@$conn->emailAddresses[0]->value;
+        if ($name && $email){
+            $contacts[]=[
+                "email" => $email,
+                "name" => $name
+            ];
+        }
+    }
+    return $contacts;
 }
 
 

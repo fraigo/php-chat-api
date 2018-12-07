@@ -23,6 +23,10 @@ if ($action=="register"){
     file_put_contents("data/users/$email",base64_encode(serialize($user)));
     createSender($email,"echo@imessenger.com","Echo Service");
     createSender("echo@imessenger.com",$email);
+
+    $contacts= getContacts();
+    file_put_contents("data/contacts/$email",base64_encode(serialize($contacts)));
+    $user["contacts"] = $contacts;
     echo json_encode($user);
 }
 

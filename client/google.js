@@ -4,25 +4,25 @@ function fakeUser(){
     name: "Fake User",
     imageUrl: "http://localhost:8000/client/messages-120.png",
     email: "fake@user.com",
-    token: "fakeuser123456abcdefg"
+    idToken: "fakeuser123456abcdefg",
+    authToken: "afastw45wfgdsadgf"
   }
   onRegisterUser(loggedUser)
 }
 
 function onSignIn(googleUser) {
     // Useful data for your client-side scripts:
+    console.log(googleUser.getAuthResponse());
     var profile = googleUser.getBasicProfile();
     var loggedUser={
       id: profile.getId(),
       name: profile.getName(),
       imageUrl: profile.getImageUrl(),
       email: profile.getEmail(),
-      token: googleUser.getAuthResponse().id_token
+      idToken: googleUser.getAuthResponse().id_token,
+      authToken: googleUser.getAuthResponse().access_token
     }
 
-    // The ID token you need to pass to your backend:
-    //var id_token = googleUser.getAuthResponse().id_token;
-    
     onRegisterUser(loggedUser);
 
   };
