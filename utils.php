@@ -102,3 +102,42 @@ if (!function_exists('getallheaders'))
        return $headers; 
     } 
 } 
+
+
+function createMessage($store, $from, $to, $message){
+    $f=fopen("data/chats/$store","a");
+    $result = [];
+    $result["from"]=$from;
+    $result["to"]=$to;
+    $result["timestamp"]=time();
+    $result["visible"]=1;
+    $result["message"]=$message;
+    fwrite($f,base64_encode(serialize($result)));
+    fwrite($f,"\n");
+    fclose($f);
+}
+
+function createSender($from,$to,$name=null){
+    $senders=[];
+    if (file_exists("data/senders/$from")){
+        $ser=(file_get_contents("data/senders/$from"));
+        $senders=unserialize(base64_decode($ser));
+    }
+    $sender=@$senders[$to];
+    if (!$sender){
+        $sender=[];
+        $sender["id"]=10000+count($senders);
+        $sender["email"]=$to;
+        $sender["name"]=$name?:$to;
+        $sender["number"]="";
+        $sender["imageUrl"]="";
+    }
+    if (file_exists("data/users/$to")){
+        $ser=(file_get_contents("data/users/$to"));
+        $user=unserialize(base64_decode($ser));
+        $sender["name"]=$user["name"];
+        $sender["imageUrl"]=$user["imageUrl"];
+    }
+    $senders[$to] = $sender;
+    file_put_contents("data/senders/$from",base64_encode(serialize($senders)));  
+}

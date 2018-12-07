@@ -29,77 +29,18 @@ function push($id){
     $from=$_REQUEST["from"];
     $message=$_REQUEST["message"];
 
-    $f=fopen("data/chats/$id","a");
-    $result = [];
-    $result["from"]=$from;
-    $result["to"]=$id;
-    $result["timestamp"]=time();
-    $result["visible"]=1;
-    $result["message"]=$message;
-    fwrite($f,base64_encode(serialize($result)));
-    fwrite($f,"\n");
-    fclose($f);
-
-    $senders=[];
-    if (file_exists("data/senders/$id")){
-        $ser=(file_get_contents("data/senders/$id"));
-        $senders=unserialize(base64_decode($ser));
-    }
-    $sender=@$senders[$from];
-    if (!$sender){
-        $sender=[];
-        $sender["id"]=10000+count($senders);
-        $sender["email"]=$from;
-        $sender["name"]=$from;
-        $sender["number"]="";
-        $sender["imageUrl"]="";   
-    }
-    if (file_exists("data/users/$from")){
-        $ser=(file_get_contents("data/users/$from"));
-        $user=unserialize(base64_decode($ser));
-        $sender["name"]=$user["name"];
-        $sender["imageUrl"]=$user["imageUrl"];
-    }
-    $senders[$from] = $sender;
-    file_put_contents("data/senders/$id",base64_encode(serialize($senders)));    
-
-    if ($from != $id){
-        $f=fopen("data/chats/$from","a");
-        $result = [];
-        $result["from"]=$from;
-        $result["to"]=$id;
-        $result["timestamp"]=time();
-        $result["visible"]=1;
-        $result["message"]=$message;
-        fwrite($f,base64_encode(serialize($result)));
-        fwrite($f,"\n");
-        fclose($f);
+    createMessage($id, $from, $id, $message);
+    createSender($id,$from);
     
-        $senders=[];
-        if (file_exists("data/senders/$from")){
-            $ser=(file_get_contents("data/senders/$from"));
-            $senders=unserialize(base64_decode($ser));
-        }
-        $sender=@$senders[$id];
-        if (!$sender){
-            $sender=[];
-            $sender["id"]=10000+count($senders);
-            $sender["email"]=$id;
-            $sender["name"]=$id;
-            $sender["number"]="";
-            $sender["imageUrl"]="";
-        }
-        if (file_exists("data/users/$id")){
-            $ser=(file_get_contents("data/users/$id"));
-            $user=unserialize(base64_decode($ser));
-            $sender["name"]=$user["name"];
-            $sender["imageUrl"]=$user["imageUrl"];
-        }
-        $senders[$id] = $sender;
-        file_put_contents("data/senders/$from",base64_encode(serialize($senders)));   
+    if ($from != $id){
+        createMessage($from, $from, $id, $message);
+        createSender($from,$id);  
     }
-     
-
+    if ($id=="echo@imessenger.com"){
+        $ip = $_SERVER["REMOTE_ADDR"];
+        createMessage($from,"echo@imessenger.com",$from,"You sent: ".$message."\nFrom: $ip");
+    }
+    
     $result["timestamp"]=$timestamp;
     responseJson($result);
 }
