@@ -1,5 +1,4 @@
 <?php
-header("Content-type: text/json");
 
 if ($action=="register"){
     $email=strtolower($id);
@@ -27,7 +26,7 @@ if ($action=="register"){
     $contacts= getContacts();
     file_put_contents("data/contacts/$email",base64_encode(serialize($contacts)));
     $user["contacts"] = $contacts;
-    echo json_encode($user);
+    responseJson($user);
 }
 
 if ($action=="get"){
@@ -41,5 +40,5 @@ if ($action=="get"){
         $ser=(file_get_contents("data/users/$email"));
         $user=unserialize(base64_decode($ser));
     }
-    echo json_encode($user);
+    responseJson($user);
 }

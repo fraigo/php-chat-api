@@ -29,7 +29,7 @@ var app = new Vue({
             apiCall("Sender/get/"+this.user.email+"/",function(data){
                 self.contacts = data;
                 self.currentContact=self.findContact(self.currentContact.email);
-                if ((!self.currentContact || !self.currentContact.email) && data.length>0){
+                if (!self.currentContact.email && data.length>0){
                     self.contactClick(data[0])
                 }
                 setTimeout(function(){
@@ -169,8 +169,8 @@ var app = new Vue({
             this[item.click]()
             this.menu=false
         },
-        findItem(ev){
-            console.log("Find item")
+        autoCompleteContact(ev){
+            console.log("AutoComplete item")
             console.log(ev)
         }
     },
@@ -182,6 +182,9 @@ var app = new Vue({
     computed:{
         isLogged:function(){
             return this.user && this.user.email!=null;
+        },
+        allContacts:function(){
+            return this.contacts.concat(this.user.contacts)
         }
     }
 })

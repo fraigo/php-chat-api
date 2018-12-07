@@ -23,7 +23,7 @@ function getClientId(){
 }
 
 function getAuthToken(){
-    getHeader("AuthToken");
+    return getHeader("AuthToken");
 }
 
 
@@ -90,7 +90,7 @@ function getContacts(){
     $client->setAccessToken($authToken);
     $service = new Google_Service_PeopleService($client);
     $optParams = array(
-        'pageSize' => 2000,
+        'pageSize' => 3000,
         'personFields' => 'names,emailAddresses',
       );
     $results = $service->people_connections->listPeopleConnections('people/me', $optParams);
@@ -98,7 +98,7 @@ function getContacts(){
     foreach($results->connections as $conn){
         $name=@$conn->names[0]->displayName;
         $email=@$conn->emailAddresses[0]->value;
-        if ($name && $email){
+        if ($name && $email ){
             $contacts[]=[
                 "email" => $email,
                 "name" => $name

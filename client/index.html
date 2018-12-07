@@ -107,17 +107,18 @@
             <v-flex sm8 class="pl-3">
                 <v-combobox
                     v-model="currentContact"
-                    :items="contacts"
+                    :items="allContacts"
+                    item-text="name"
                     label=""
                     @change="contactClick(currentContact)"
                     class="contact-selection"
                 >
                     <template slot="selection" slot-scope="data">
-                        <v-layout row
+                        <v-chip row
                             :selected="data.selected"
                             :disabled="data.disabled"
                             :key="data.id"
-                            
+                            @input="data.parent.selectItem(data.item)"
                         >
                             <v-avatar class="ma-2" size="32">
                                 <img :src="imageUrl(data.item.imageUrl)">
@@ -127,7 +128,7 @@
                                 <br>
                                 {{ data.item.email }}
                             </div>
-                        </v-layout>
+                        </v-chip>
                     </template>
                     <template slot="item" slot-scope="data">
                             <v-layout row 
