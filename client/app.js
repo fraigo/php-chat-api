@@ -16,7 +16,11 @@ var app = new Vue({
         valid:false,
         newMessage:{},
         currentContact:{},
-        dialogTitle:"New"
+        dialogTitle:"New",
+        rules:{
+            email : [function(v){ return !v || v.indexOf("@")>0 || 'Invalid email' }],
+            message : [function(v){ return !v || v.length<200 || 'Maximum length : 200 characters' }]
+        }
     },
     methods:{
         viewContacts: function(){
@@ -89,10 +93,16 @@ var app = new Vue({
             this.dialog=true;
         },
         sendContact(){
+            if (!this.newMessage || this.newMessage.email.trim().length==0){
+                return;
+            }
+            if (!this.newMessage || this.newMessage.message.trim().length==0){
+                return;
+            }
             var self=this
             this.dialog = false
             var message=encodeURIComponent(this.newMessage.message)
-            var url="Message/push/"+this.user.email+"/?to="+this.newMessage.email+"&message="+message;
+            var url="Message/push/"+this.user.email.trim().toLowerCase()+"/?to="+this.newMessage.email.trim().toLowerCase()+"&message="+message;
             console.log(JSON.stringify(self.newMessage));
             apiCall(url,function(data){
                 self.currentContact.email=self.newMessage.email
@@ -226,14 +236,7 @@ function apiFullCall(method, query, headers,  callback){
   fetch(API_ENDPOINT + query, config)
     .then(function(response) {
         if(!response.ok){
-            console.log(response)
-            console.log("Error "+response.status+" : "+ response.statusText);
-            var data=response.json();
-            alert(response.text());
-            if (data && data.error){
-                
-                alert(data.error);
-            }
+            alert("Error "+response.status+" : "+ response.statusText);
             return null;
         }
         return response.json();

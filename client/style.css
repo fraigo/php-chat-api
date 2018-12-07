@@ -27,6 +27,9 @@ body {
     text-align:right;
     align-items: flex-end;
 }
+.v-messages__message, .error--text{
+    color: #E44 !important;
+}
 
 .contact-list{
     border-right: 1px solid #ccc;
