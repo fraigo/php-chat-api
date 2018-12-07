@@ -114,7 +114,7 @@
                     class="contact-selection"
                 >
                     <template slot="selection" slot-scope="data">
-                        <v-chip row
+                        <v-layout row
                             :selected="data.selected"
                             :disabled="data.disabled"
                             :key="data.id"
@@ -128,7 +128,7 @@
                                 <br>
                                 {{ data.item.email }}
                             </div>
-                        </v-chip>
+                        </v-layout>
                     </template>
                     <template slot="item" slot-scope="data">
                             <v-layout row 
