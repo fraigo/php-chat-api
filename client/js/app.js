@@ -3,7 +3,9 @@ var app = new Vue({
     data: {
         contacts:[],
         messages:[],
-        user: {},
+        user: {
+            contacts:[]
+        },
         hash: '',
         actions:[
             { title:"Contacts", click: "viewContacts", icon: 'contact_mail'},
@@ -14,7 +16,9 @@ var app = new Vue({
         menu: false,
         dialog: false,
         valid:false,
-        newMessage:{},
+        newMessage:{
+            contact: null
+        },
         currentContact:{},
         dialogTitle:"New",
         rules:{
@@ -103,17 +107,18 @@ var app = new Vue({
             this.dialog = false
             var message=encodeURIComponent(this.newMessage.message)
             var url="Message/push/"+this.user.email.trim().toLowerCase()+"/?to="+this.newMessage.email.trim().toLowerCase()+"&message="+message;
-            console.log(JSON.stringify(self.newMessage));
+            //console.log(JSON.stringify(self.newMessage));
             apiCall(url,function(data){
                 self.currentContact.email=self.newMessage.email
                 self.viewContacts()
-                self.contactClick(self.newMessage)
                 self.newMessage.email="@gmail.com"
                 self.newMessage.message=""
+                self.newMessage.contact=null
             })
         },
-        sendMessage(){
-            
+        newContactSelected(contact){
+            //console.log(contact);
+            document.getElementById("messageText").focus();
         },
         isVisible:function(item){
             if (item.guest){
@@ -147,7 +152,7 @@ var app = new Vue({
             return date.toISOString();
         },
         contactClick(item){
-            console.log("item",item)
+            //console.log("item",item)
             var self=this
             this.currentContact = item
             self.messages = []
@@ -165,18 +170,15 @@ var app = new Vue({
             
         },
         menuClick(item){
-            console.log(item.click)
             this[item.click]()
             this.menu=false
         },
         autoCompleteContact(ev){
-            console.log("AutoComplete item")
-            console.log(ev)
+            
         }
     },
     mounted:function(){
         this.$el.style.display="";
-        console.log(this.actions);
         startWorkers();
     },
     computed:{
@@ -202,7 +204,6 @@ function onRegisterUser(loggedUser){
         .replace("{name}",name)
         .replace("{imageLink}",imageLink)
         .replace("{token}",idToken)
-    console.log(query);
     API_HEADERS={
         'Authentication': 'Bearer '+idToken,
         'Client-Id': getMeta("google-signin-client_id"),

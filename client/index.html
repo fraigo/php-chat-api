@@ -216,6 +216,36 @@
                 
                 <v-form v-model="valid">
                     
+                    <v-combobox
+                        v-model="newMessage.contact"
+                        :items="allContacts"
+                        item-text="name"
+                        label=""
+                        @change="newContactSelected(newMessage.contact)"
+                        class="contact-selection rounded"
+                        placeholder="Select Contact"
+                    >
+                        <template slot="selection" slot-scope="data">
+                            <v-layout row
+                                :selected="data.selected"
+                                :disabled="data.disabled"
+                                :key="data.item.email"
+                                @input="data.parent.selectItem(data.item)"
+                            >
+                            <div>"{{ data.item.name }}"" &lt;{{ newMessage.email = data.item.email }}&gt;"</div>
+                                    
+                            </v-layout>
+                        </template>
+                        <template slot="item" slot-scope="data">
+                                <v-layout row 
+                                    :title="data.item"
+                                    :key="data.item.email+data.item.name"
+                                >
+                                    <div>"{{ data.item.name }}"" &lt;{{ data.item.email }}&gt;"</div>
+                                    
+                                </v-layout>
+                            </template>
+                    </v-combobox>
                     <v-text-field
                         v-model="newMessage.email"
                         label="E-mail"
@@ -226,6 +256,7 @@
                         v-model="newMessage.message"
                         label="Message"
                         :rules="rules.message"
+                        id="messageText"
                         required
                     ></v-text-field>
                 </v-form>
