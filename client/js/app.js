@@ -261,10 +261,10 @@ function apiFullCall(method, query, headers,  callback){
 function startWorkers() {
     if(typeof(Worker) !== "undefined") {
         if(typeof(mw) == "undefined") {
-            mw = new Worker("message-worker.js");
+            mw = new Worker("js/message-worker.js");
         }
         if(typeof(cw) == "undefined") {
-            cw = new Worker("contact-worker.js");
+            cw = new Worker("js/contact-worker.js");
         }
     } else {
         alert("Sorry, your browser does not support Web Workers.");

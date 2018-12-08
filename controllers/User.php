@@ -1,5 +1,6 @@
 <?php
 
+
 if ($action=="register"){
     $email=strtolower($id);
     if (!validUser($email)){

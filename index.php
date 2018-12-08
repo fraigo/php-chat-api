@@ -3,7 +3,12 @@
 require("vendor/autoload.php");
 require("utils.php");
 
-@list($base,$controller,$action,$id, $content) = explode("/",$_SERVER["PATH_INFO"]);
+$PATHINFO= @$_SERVER["PATH_INFO"];
+if (!$PATHINFO){
+    $PATHINFO= $_SERVER["REQUEST_URI"];
+}
+
+@list($base,$controller,$action,$id, $content) = explode("/", $PATHINFO);
 
 echo response($controller,$action, $id, $content);
 
