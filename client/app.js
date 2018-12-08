@@ -225,7 +225,7 @@ function onRegisterUser(loggedUser){
 }
 
 console.log(document.location.protocol)
-API_ENDPOINT = document.location.protocol + '//' + document.location.host + '/index.php/'
+API_ENDPOINT = document.location.protocol + '//' + document.location.host + document.location.pathname + '../index.php/'
 API_HEADERS= {}
 
 function apiCall( query, callback){

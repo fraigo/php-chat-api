@@ -9,8 +9,9 @@ export EXCLUDE=
 
 # creating package
 rm -f package.zip
+mv vendor ../
 zip -r package.zip * -x .git installer.php deploy.sh package*.json LICENSE README.md $EXCLUDE
-
+mv ../vendor ./
 # transfer package
 if [ "$FTP_PASS" = "" ];then
     echo "Password for $USER: "
