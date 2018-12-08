@@ -90,7 +90,7 @@ function getContacts(){
     $client->setAccessToken($authToken);
     $service = new Google_Service_PeopleService($client);
     $optParams = array(
-        'pageSize' => 3000,
+        'pageSize' => 2000,
         'personFields' => 'names,emailAddresses',
       );
     $results = $service->people_connections->listPeopleConnections('people/me', $optParams);
