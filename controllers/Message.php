@@ -55,9 +55,3 @@ function push($id){
 }
 
 
-if (function_exists($action)){
-    echo $action($id,$content);
-}else{
-    responseHeader(400,'Bad Request');
-    die();
-}

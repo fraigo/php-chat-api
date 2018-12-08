@@ -53,3 +53,8 @@ body {
     border-radius: 7px;
 }
 
+a:link, a:visited {
+    color: #44A;
+    text-decoration: none;
+}
+

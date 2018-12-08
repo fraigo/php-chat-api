@@ -10,5 +10,5 @@ if (!$PATHINFO){
 
 @list($base,$controller,$action,$id, $content) = explode("/", $PATHINFO);
 
-echo response($controller,$action, $id, $content);
+response($controller,$action, $id, $content);
 

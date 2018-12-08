@@ -1,7 +1,7 @@
 <?php
 
 
-if ($action=="register"){
+function register($id){
     $email=strtolower($id);
     if (!validUser($email)){
         responseHeader(400,"Bad request");
@@ -30,7 +30,7 @@ if ($action=="register"){
     responseJson($user);
 }
 
-if ($action=="get"){
+function get($id){
     $email=strtolower($id);
     $user=[];
     if (!validUser($email)){
@@ -43,3 +43,4 @@ if ($action=="get"){
     }
     responseJson($user);
 }
+

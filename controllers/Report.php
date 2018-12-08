@@ -1,22 +1,28 @@
 <?php
 
-header("Content-type: text/plain");
 
 function reportFile($dir){
     $content= dirContent($dir);
+    $result=[];
     foreach($content as $file){
         $lines= fileLines("$dir/$file");
-        echo "\n$dir/$file\n\n";
+        $result["$dir/$file"]=[];
         foreach($lines as $line){
             $data=unserialize(base64_decode($line));
-            print_r($data);
-            echo "\n";
+            $result["$dir/$file"]=$data;
         }
     }
+    return $result;
+}
+
+function all(){
+    $results=[];
+    $results=array_merge($results,reportFile("data/users"));
+    $results=array_merge($results,reportFile("data/chats"));
+    $results=array_merge($results,reportFile("data/senders"));
+    return $results;
 }
 
 
-reportFile("data/users");
-reportFile("data/chats");
-reportFile("data/senders");
+
 

@@ -2,7 +2,7 @@
 
 header("Content-type: text/json");
 
-if ($action == "get"){
+function get($id){
     $email=strtolower($id);
     $result = [];
     if (!validUser($email)){
@@ -15,3 +15,5 @@ if ($action == "get"){
     }
     echo json_encode(array_values($result));
 }
+
+

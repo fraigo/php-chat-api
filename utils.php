@@ -54,6 +54,17 @@ function response($controller, $action, $id, $content){
     $file="./controllers/$controller.php";
     if (file_exists($file)){
         include($file);
+        if (function_exists($action)){
+            $result = $action($id);
+            if (is_array($result)){
+                responseJson($result);
+            }else{
+                echo $result;
+            }
+        }else{
+            responseHeader(400,'Bad Request');
+            die();
+        }
     }else{
         responseHeader(400,'Bad Request');
         die();
