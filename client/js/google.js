@@ -2,7 +2,7 @@ function fakeUser(){
   var loggedUser={
     id: 123123123,
     name: "Fake User",
-    imageUrl: "http://localhost:8000/client/messages-120.png",
+    imageUrl: "http://localhost:8000/client/images/messages-120.png",
     email: "fake@user.com",
     idToken: "fakeuser123456abcdefg",
     authToken: "afastw45wfgdsadgf"

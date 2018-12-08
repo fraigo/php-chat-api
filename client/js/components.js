@@ -1,6 +1,6 @@
 function imageUrl(url){
     if (url==null || url==""){
-        return "user-icon.png"
+        return "images/user-icon.png"
     }
     return url
 }
