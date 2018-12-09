@@ -12,6 +12,7 @@ function getHeader($name){
 
 function getIdToken(){
     $auth=getHeader("Authentication");
+    $id_token="";
     if ($auth){
         list($type,$id_token) = explode(" ",$auth);
     }
@@ -55,7 +56,7 @@ function response($controller, $action, $id, $content){
     if (file_exists($file)){
         include($file);
         if (function_exists($action)){
-            $result = $action($id);
+            $result = $action($id,$content);
             if (is_array($result)){
                 responseJson($result);
             }else{

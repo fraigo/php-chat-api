@@ -175,6 +175,18 @@ var app = new Vue({
         },
         autoCompleteContact(ev){
             
+        },
+        ctChange(ev){
+            console.log("Change", ev)
+        },
+        ctKeydown(ev){
+            console.log("Keydown", ev)
+            this.newMessage.contact={
+                name: ev,
+                email: ev
+            }
+            this.newMessage.email = ""
+            this.newContactSelected(this.newMessage.contact)
         }
     },
     mounted:function(){
