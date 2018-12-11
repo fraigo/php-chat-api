@@ -1,4 +1,7 @@
-# iOS Messaging Application
+# PHP Chat API + Web Client
 
-This applications implements a Chat backend using PHP
+A simple PHP REST API to manage a chat application.
+Also, there is a sample Web Client to test the API endpoint
+
+
 
