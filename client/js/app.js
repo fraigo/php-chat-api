@@ -180,13 +180,16 @@ var app = new Vue({
             console.log("Change", ev)
         },
         ctKeydown(ev){
-            console.log("Keydown", ev)
-            this.newMessage.contact={
-                name: ev,
-                email: ev
-            }
+            console.log("KeyDown", ev)
             this.newMessage.email = ""
-            this.newContactSelected(this.newMessage.contact)
+            if(typeof(this.newMessage.contact)=="string"){
+                this.newMessage.contact={
+                    name: ev,
+                    email: ev
+                }
+                this.newMessage.email = ""
+                this.newContactSelected(this.newMessage.contact)
+            }
         }
     },
     mounted:function(){

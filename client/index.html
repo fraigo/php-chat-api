@@ -225,6 +225,7 @@
                         class="contact-selection rounded"
                         placeholder="Select Contact"
                         @input="ctKeydown"
+                        clearable
                     >
                         <template slot="selection" slot-scope="data">
                             <v-layout row
@@ -253,6 +254,7 @@
                         :rules="rules.email"
                         @keypress="newMessage.contact=null"
                         required
+                        clearable
                     ></v-text-field>
                     <v-text-field
                         v-model="newMessage.message"
