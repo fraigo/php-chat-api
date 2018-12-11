@@ -1,8 +1,4 @@
-export FTP_HOST=ftp.marketienda.com
-export FTP_PATH=coreapps.info/projects/php-chat
-export WEB_URL=http://coreapps.info/projects/php-chat
-export USER=francisco@marketienda.com
-export EXCLUDE=
+source ./deploy-ftp.config.sh
 
 # Build site
 # npm run build
